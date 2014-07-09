@@ -6,7 +6,8 @@ import android.content.Intent;
 public class CommonUtilities {
 
 	 // give your server registration url here
-    static final String SERVER_URL = "http://10.82.133.150:80/reg.php";
+    static final String SERVER_REG_URL = "http://10.82.133.150:80/reg.php";
+    static final String SERVER_UNREG_URL = "http://10.82.133.150:80/unreg.php";
     static final String SERVER_RECEIVE_URL = "http://10.82.133.150:80/receive.php";
     //static final String SERVER_URL = "http://pretendedamended.corp.sg3.yahoo.com/";
  
@@ -16,7 +17,7 @@ public class CommonUtilities {
     /**
      * Tag used on log messages.
      */
-    static final String TAG = "AndroidHive GCM";
+    static final String TAG = "Onepush GCM E2E";
  
     static final String DISPLAY_MESSAGE_ACTION = "com.yahoo.onepush.DISPLAY_MESSAGE";
  

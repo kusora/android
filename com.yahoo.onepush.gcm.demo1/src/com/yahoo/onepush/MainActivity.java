@@ -91,8 +91,9 @@ public class MainActivity extends ActionBarActivity {
         // Getting name, email from intent
         Intent i = getIntent();
          
-        name = i.getStringExtra("name");
-        email = i.getStringExtra("email");     
+        //name = i.getStringExtra("name");
+        //email = i.getStringExtra("email");
+        //GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
          
         // Make sure the device has the proper dependencies.
         GCMRegistrar.checkDevice(this);
@@ -110,15 +111,13 @@ public class MainActivity extends ActionBarActivity {
         // Get GCM registration id
         final String regId = GCMRegistrar.getRegistrationId(this);
         // Check if regid already presents
-        //if (regId.equals("")) {
-        	if (true) {
+        if (regId.equals("")) {
             // Registration is not present, register now with GCM          
             GCMRegistrar.register(this, SENDER_ID);
         } else {
             // Device is already registered on GCM
             if (GCMRegistrar.isRegisteredOnServer(this)) {
-                // Skips registration.             
-            	System.out.println("test:" + regId);
+                // Skips registration.
                 Toast.makeText(getApplicationContext(), "Already registered with GCM" + regId, Toast.LENGTH_LONG).show();
             } else {
                 // Try to register again, but not in the UI thread.
@@ -131,7 +130,7 @@ public class MainActivity extends ActionBarActivity {
                     protected Void doInBackground(Void... params) {
                         // Register on our server
                         // On server creates a new user
-                        ServerUtilities.register(context, name, email, regId);
+                        ServerUtilities.register(context, regId);
                         return null;
                     }
  

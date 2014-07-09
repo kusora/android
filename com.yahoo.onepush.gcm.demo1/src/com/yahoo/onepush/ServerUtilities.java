@@ -1,6 +1,7 @@
 package com.yahoo.onepush;
 
-import static com.yahoo.onepush.CommonUtilities.SERVER_URL;
+import static com.yahoo.onepush.CommonUtilities.SERVER_REG_URL;
+import static com.yahoo.onepush.CommonUtilities.SERVER_UNREG_URL;
 import static com.yahoo.onepush.CommonUtilities.SERVER_RECEIVE_URL;
 import static com.yahoo.onepush.CommonUtilities.TAG;
 import static com.yahoo.onepush.CommonUtilities.displayMessage;
@@ -28,36 +29,33 @@ public final class ServerUtilities {
     private static final Random random = new Random();
  
     /**
-     * Return the notification body to server to count
+     * Send the notification body to server to count
      *
      */
-    static void NotifyResponse(final Context context, String data) {
+    static void SendNotification(final Context context, String data) {
         Log.i(TAG, "send notificaiton body {" + data + "} to server");
         String serverUrl = SERVER_RECEIVE_URL;
         Map<String, String> params = new HashMap<String, String>();
-        params.put("regId", regId);
-        params.put("name", name);
-        params.put("email", email);
+        params.put("message", data);
          
         long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
         // Once GCM returns a registration id, we need to register on our server
         // As the server might be down, we will retry it a couple
         // times.
         for (int i = 1; i <= MAX_ATTEMPTS; i++) {
-            Log.d(TAG, "Attempt #" + i + " to register");
+            Log.d(TAG, "Attempt #" + i + " to send notification message to server");
             try {
                 displayMessage(context, context.getString(
-                        R.string.server_registering, i, MAX_ATTEMPTS));
+                        R.string.send_notification, i, MAX_ATTEMPTS));
                 post(serverUrl, params);
-                GCMRegistrar.setRegisteredOnServer(context, true);
-                String message = context.getString(R.string.server_registered);
+                String message = context.getString(R.string.send_notification_end, data);
                 CommonUtilities.displayMessage(context, message);
                 return;
             } catch (IOException e) {
                 // Here we are simplifying and retrying on any error; in a real
                 // application, it should retry only on unrecoverable errors
                 // (like HTTP error code 503).
-                Log.e(TAG, "Failed to register on attempt " + i + ":" + e);
+                Log.e(TAG, "Failed to send notification body to server on attempt " + i + ":" + e);
                 if (i == MAX_ATTEMPTS) {
                     break;
                 }
@@ -74,7 +72,7 @@ public final class ServerUtilities {
                 backoff *= 2;
             }
         }
-        String message = context.getString(R.string.server_register_error,
+        String message = context.getString(R.string.send_notification_error,
                 MAX_ATTEMPTS);
         CommonUtilities.displayMessage(context, message);
     }
@@ -82,13 +80,11 @@ public final class ServerUtilities {
      * Register this account/device pair within the server.
      *
      */
-    static void register(final Context context, String name, String email, final String regId) {
+    static void register(final Context context, final String regId) {
         Log.i(TAG, "registering device (regId = " + regId + ")");
-        String serverUrl = SERVER_URL;
+        String serverUrl = SERVER_REG_URL;
         Map<String, String> params = new HashMap<String, String>();
         params.put("regId", regId);
-        params.put("name", name);
-        params.put("email", email);
          
         long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
         // Once GCM returns a registration id, we need to register on our server
@@ -135,7 +131,7 @@ public final class ServerUtilities {
      */
     static void unregister(final Context context, final String regId) {
         Log.i(TAG, "unregistering device (regId = " + regId + ")");
-        String serverUrl = SERVER_URL + "/unregister";
+        String serverUrl = SERVER_UNREG_URL;
         Map<String, String> params = new HashMap<String, String>();
         params.put("regId", regId);
         try {
@@ -204,6 +200,8 @@ public final class ServerUtilities {
             int status = conn.getResponseCode();
             if (status != 200) {
               throw new IOException("Post failed with error code " + status);
+            } else {
+            	Log.i(TAG, "Response:" + conn.getResponseMessage());
             }
         } finally {
             if (conn != null) {

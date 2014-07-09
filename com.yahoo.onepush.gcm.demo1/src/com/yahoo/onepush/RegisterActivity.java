@@ -3,7 +3,7 @@ package com.yahoo.onepush;
 import static com.yahoo.onepush.CommonUtilities.DISPLAY_MESSAGE_ACTION;
 import static com.yahoo.onepush.CommonUtilities.EXTRA_MESSAGE;
 import static com.yahoo.onepush.CommonUtilities.SENDER_ID;
-import static com.yahoo.onepush.CommonUtilities.SERVER_URL;
+import static com.yahoo.onepush.CommonUtilities.SERVER_REG_URL;
 import static com.yahoo.onepush.CommonUtilities.TAG;
 import android.app.Activity;
 import android.content.Intent;
@@ -43,7 +43,7 @@ public class RegisterActivity extends Activity {
             return;
         }
      // Check if GCM configuration is set
-        if (SERVER_URL == null || SENDER_ID == null || SERVER_URL.length() == 0
+        if (SERVER_REG_URL == null || SENDER_ID == null || SERVER_REG_URL.length() == 0
                 || SENDER_ID.length() == 0) {
             // GCM sernder id / server url is missing
             alert.showAlertDialog(RegisterActivity.this, "Configuration Error!",

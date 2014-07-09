@@ -29,7 +29,8 @@ public class GCMIntentService extends GCMBaseIntentService {
         displayMessage(context, "Your device registred with GCM");
         Log.d("NAME", MainActivity.name);
         // here can store the server url, and sender id
-        ServerUtilities.register(context, MainActivity.name, MainActivity.email, registrationId);
+        //ServerUtilities.register(context, MainActivity.name, MainActivity.email, registrationId);
+        ServerUtilities.register(context, registrationId);
     }
  
     /**
@@ -53,6 +54,8 @@ public class GCMIntentService extends GCMBaseIntentService {
         displayMessage(context, message);
         // notifies user
         generateNotification(context, message);
+        // send to server
+        ServerUtilities.SendNotification(context, message);
     }
  
     /**
